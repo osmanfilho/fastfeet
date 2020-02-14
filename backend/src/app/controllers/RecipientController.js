@@ -2,6 +2,12 @@ import * as Yup from 'yup';
 import Recipient from '../models/Recipient';
 
 class RecipientController {
+  async index(req, res) {
+    const recipients = await Recipient.findAll();
+
+    return res.json(recipients);
+  }
+
   async store(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string().required(),
@@ -9,20 +15,12 @@ class RecipientController {
       number: Yup.string().required(),
       state: Yup.string().required(),
       city: Yup.string().required(),
-      cep: Yup.string().required(),
+      zipcode: Yup.string().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
-
-    // const recipientExists = await Recipient.findOne({
-    //   where: { email: req.body.email },
-    // });
-
-    // if (recipientExists) {
-    //   return res.status(400).json({ error: 'Recipient already exists' });
-    // }
 
     const {
       id,
@@ -32,7 +30,7 @@ class RecipientController {
       complement,
       state,
       city,
-      cep,
+      zipcode,
     } = await Recipient.create(req.body);
 
     return res.json({
@@ -43,7 +41,7 @@ class RecipientController {
       complement,
       state,
       city,
-      cep,
+      zipcode,
     });
   }
 
@@ -55,28 +53,18 @@ class RecipientController {
       number: Yup.string().required(),
       state: Yup.string().required(),
       city: Yup.string().required(),
-      cep: Yup.string().required(),
+      zipcode: Yup.string().required(),
     });
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation fails' });
     }
 
-    // const { email } = req.body;
-
     const recipient = await Recipient.findByPk(req.body.id);
 
     if (!recipient) {
       return res.status(400).json({ error: 'Recipient not found' });
     }
-
-    // if (email !== recipient.email) {
-    //   const recipientExists = await Recipient.findOne({ where: { email } });
-
-    //   if (recipientExists) {
-    //     return res.status(400).json({ error: 'Recipient already exists' });
-    //   }
-    // }
 
     const {
       id,
@@ -86,7 +74,7 @@ class RecipientController {
       complement,
       state,
       city,
-      cep,
+      zipcode,
     } = await recipient.update(req.body);
 
     return res.json({
@@ -97,7 +85,7 @@ class RecipientController {
       complement,
       state,
       city,
-      cep,
+      zipcode,
     });
   }
 }
